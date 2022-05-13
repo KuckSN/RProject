@@ -1,29 +1,38 @@
-#library(magick)
-#data_matrix <- NULL
-#y_matrix <- NULL
 library(magick)
+# data_matrix <- NULL
+# y_matrix <- NULL
+
+character <- c("subtract_indexes", 'leftP_indexes', "rightP_indexes", "plus_indexes", "equal_indexes", "zero_indexes", "one_indexes",
+               "two_indexes", "three_indexes", "four_indexes", "five_indexes", "six_indexes", 'seven_indexes', "eight_indexes", 
+               "nine_indexes", "div_indexes", "mul_indexes")
+regex <- c("-", "\\(", ")", "\\+", "=", "0", "1", "2", "3", "4", "5","6", "7","8","9", "div", "X")
 
 
-# for(file in list.files(path = "C:\\Users\\kuckn\\Desktop\\Usable Data")) {
-#   current_file <- file
-#   print(paste("Processing:", file, sep=" "))
-#   for(images in list.files(paste("C:\\Users\\kuckn\\Desktop\\Usable Data", "\\", current_file, sep = ""), full.names = TRUE)) {
-#     current_image <- image_read(images)
-#     current_image_data <- as.numeric(current_image[[1]][1, , ])
-#     data_matrix <- rbind(data_matrix, current_image_data)
-#     y_matrix <- rbind(y_matrix, file)
-#     row.names(data_matrix)[nrow(data_matrix)] <- file
-#   }
-# }
+#Process image unto vector
+for(file in list.files(path = "C:\\Users\\kuckn\\Desktop\\Usable Data")) {
+  current_file <- file
+  print(paste("Processing:", file, sep=" "))
+  for(images in list.files(paste("C:\\Users\\kuckn\\Desktop\\Usable Data", "\\", current_file, sep = ""), full.names = TRUE)) {
+    current_image <- image_read(images)
+    current_image_data <- as.numeric(current_image[[1]][1, , ])
+    data_matrix <- rbind(data_matrix, current_image_data)
+    y_matrix <- rbind(y_matrix, file)
+    row.names(data_matrix)[nrow(data_matrix)] <- file
+  }
+}
 
 #Analysis
-pca <- prcomp(data_matrix)
-plot(pca$x[, 1:2])
+pca <- prcomp(small_matrix)
+scaled_pca <- prcomp(small_matrix, scale. = TRUE)
 
+#Havent tried scaled_pca
+plot(pca$x[, c(1, 2)])
+
+#Group each character 
 subtract_indexes <- grep(rownames(pca$x), pattern = "-")
-leftP_indexes <- grep(rownames(pca$x), pattern = "(")
+leftP_indexes <- grep(rownames(pca$x), pattern = "\\(")
 rightP_indexes <- grep(rownames(pca$x), pattern = ")")
-plus_indexes <- grep(rownames(pca$x), pattern = "+")
+plus_indexes <- grep(rownames(pca$x), pattern = "\\+")
 equal_indexes <- grep(rownames(pca$x), pattern = "=")
 zero_indexes <- grep(rownames(pca$x), pattern = "0")
 one_indexes <- grep(rownames(pca$x), pattern = "1")
@@ -37,9 +46,11 @@ eight_indexes <- grep(rownames(pca$x), pattern = "8")
 nine_indexes <- grep(rownames(pca$x), pattern = "9")
 div_indexes <- grep(rownames(pca$x), pattern = "div")
 mul_indexes <- grep(rownames(pca$x), pattern = "X")
+
+#Colour each character on the plot
 points(pca$x[subtract_indexes, 1:2], col = "violetred2")
-points(pca$x[leftP_indexes, 1:2], col = "black")
-points(pca$x[rightP_indexes, 1:2], col = "orange")
+points(pca$x[leftP_indexes, 1:2], col = "gray")
+points(pca$x[rightP_indexes, 1:2], col = "brown")
 points(pca$x[plus_indexes, 1:2], col = "violet")
 points(pca$x[equal_indexes, 1:2], col = "slategray2")
 points(pca$x[zero_indexes, 1:2], col = "red")
@@ -57,6 +68,7 @@ points(pca$x[mul_indexes, 1:2], col = "green4")
 
 
 #Prediction
+#Multiclassing
 symbols <- rep(0, times = nrow(pca$x))
 symbols[zero_indexes] <- 0
 symbols[one_indexes] <- 1
@@ -80,3 +92,7 @@ predictive_matrix <- cbind(symbols, pca$x)
 #Model
 library(caret)
 model <- train(as.factor(symbols)~., data = predictive_matrix, trControl = trainControl(method = "LOOCV"), method = "rf")
+
+#See Model Summary
+#model
+#model$finalModel
