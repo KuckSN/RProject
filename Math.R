@@ -45,7 +45,7 @@ model <- randomForest(play ~ ., data = weather, ntree = 500, mtry = 4, importanc
 # User interface                   #
 ####################################
 
-ui <- fluidPage(# theme =  shinytheme("united"),
+ui <- fluidPage(#theme =  shinytheme("united"),
                 navbarPage("MathX Recognizer:",
                            tabPanel("Main",
                                     # Input values
@@ -65,35 +65,60 @@ ui <- fluidPage(# theme =  shinytheme("united"),
                                     )
                                     
                            ),
-                           tabPanel("Home",
-                                    # Input values
-                                    sidebarPanel(
-                                      HTML("<h3>Input parameters</h3>"),
-                                      
-                                      selectInput("outlook", label = "Outlook:", 
-                                                  choices = list("Sunny" = "sunny", "Overcast" = "overcast", "Rainy" = "rainy"), 
-                                                  selected = "Rainy"),
-                                      sliderInput("temperature", "Temperature:",
-                                                  min = 64, max = 86,
-                                                  value = 70),
-                                      sliderInput("humidity", "Humidity:",
-                                                  min = 65, max = 96,
-                                                  value = 90),
-                                      selectInput("windy", label = "Windy:", 
-                                                  choices = list("Yes" = "TRUE", "No" = "FALSE"), 
-                                                  selected = "TRUE"),
-                                      
-                                      actionButton("submitbutton", "Submit", class = "btn btn-primary")
+                           tabPanel("Data Views",
+                                    navbarPage("",
+                                              tabPanel("Data Table", 
+                                                       sidebarPanel(
+                                                         HTML("<h3>Peek the data</h3>"),
+                                                         
+                                                         sliderInput("numberHead", label = "Display First n rows:",
+                                                                     min = 5, max = 17016,
+                                                                     value = 5),
+                                                         
+                                                         actionButton("headButton", "Submit", class = "btn btn-primary"),
+                                                         
+                                                       ),
+                                                       
+                                                       mainPanel(
+                                                         tags$label(h3("Data Table")),
+                                                         tableOutput("dataView")
+                                                       )),
+                                              
+                                              tabPanel("Image View",
+                                                       sidebarPanel(
+                                                         HTML("<h3>Wonder How Image Data Looks Like?</h3>"),
+                                                         
+                                                         numericInput("dataRow", label = "Visualize which row?", 
+                                                                      min = 1, max = 17016,
+                                                                      value = 1),
+                                                         
+                                                         actionButton("imageButton", "Submit", class = "btn btn-primary"),
+                                                       ),
+                                                       
+                                                       mainPanel(
+                                                         tags$label(h2("Raw Data to Image")),
+                                                         h3("Image"),
+                                                         imageOutput("individualImage"),
+                                                         h3("Raw Data"),
+                                                         tableOutput("rawData")
+                                                       )),
+                                              
+                                              tabPanel("Data Summary",
+                                                       sidebarPanel(
+                                                         HTML("<h3>What Plot</h3>"),
+                                                         selectInput("plot", "Your Chosen Plot", choices = list("Plot A" = "plotA",
+                                                                                                                "Plot B" = "plotB", 
+                                                                                                                "Plot C" = "plotC"))
+                                                       ),
+                                                       
+                                                       mainPanel(
+                                                         tags$label(h2("Summary Plot")),
+                                                         plotOutput("plot")
+                                                       )),
                                     ),
-                                    
-                                    mainPanel(
-                                      tags$label(h3('Status/Output')), # Status/Output Text Box
-                                      verbatimTextOutput('contents'),
-                                      tableOutput('tabledata') # Prediction results table
-                                      
-                                    )
-                                    
                            ),
+                           
+                           tabPanel(),
                            
                            tabPanel("About",
                                     titlePanel("About"),
