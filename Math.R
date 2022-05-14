@@ -45,7 +45,7 @@ model <- randomForest(play ~ ., data = weather, ntree = 500, mtry = 4, importanc
 # User interface                   #
 ####################################
 
-ui <- fluidPage(#theme =  shinytheme("united"),
+ui <- fluidPage(theme =  shinytheme("united"),
                 navbarPage("MathX Recognizer:",
                            tabPanel("Main",
                                     # Input values
@@ -117,8 +117,6 @@ ui <- fluidPage(#theme =  shinytheme("united"),
                                                        )),
                                     ),
                            ),
-                           
-                           tabPanel(),
                            
                            tabPanel("About",
                                     titlePanel("About"),
