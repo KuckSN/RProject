@@ -45,7 +45,26 @@ model <- randomForest(play ~ ., data = weather, ntree = 500, mtry = 4, importanc
 # User interface                   #
 ####################################
 
-ui <- fluidPage(navbarPage("Math Calculator:",
+ui <- fluidPage(# theme =  shinytheme("united"),
+                navbarPage("MathX Recognizer:",
+                           tabPanel("Main",
+                                    # Input values
+                                    sidebarPanel(
+                                      HTML("<h3>Image to Math Expression</h3>"),
+                                      
+                                      fileInput("image", label = "Please Select an Image:", accept = "image/*"),
+                                     
+                                      actionButton("submitbutton", "Submit", class = "btn btn-primary")
+                                    ),
+                                    
+                                    mainPanel(
+                                      tags$label(h3('Status/Output')), # Status/Output Text Box
+                                      verbatimTextOutput('contents'),
+                                      uiOutput('uploadedImage'), #Show Uploaded Image
+                                      textOutput("predictedExpression")
+                                    )
+                                    
+                           ),
                            tabPanel("Home",
                                     # Input values
                                     sidebarPanel(
@@ -75,6 +94,7 @@ ui <- fluidPage(navbarPage("Math Calculator:",
                                     )
                                     
                            ),
+                           
                            tabPanel("About",
                                     titlePanel("About"),
                                     div(includeMarkdown("about.md"),
@@ -90,6 +110,14 @@ ui <- fluidPage(navbarPage("Math Calculator:",
 ####################################
 
 server <- function(input, output, session) {
+  
+  # First tabPanel - Main
+  observeEvent(input$image, {
+    inFile <- input$image
+    if (!is.null(inFile)){
+      
+    }
+  })
   
   # Input Data
   datasetInput <- reactive({  
