@@ -1,17 +1,11 @@
-#### What is BMI
+#### What is MathX Recognizer
 
-Body Mass Index (BMI) is essentially a value obtained from the weight and height of a person [1].
+Mathematical Expression Recognizer (MathX Recognizer) is essentially a Machine Learning model trained to recognizes mathematical expression into text form that can be computed by computers.  
+<br />
 
-#### Calculating the BMI
-BMI can be computed by dividing the person's weight (kg) by their squared height (m) as follows
+#### Training Machine Learning Model
+Library "caret" is used to train our machine learning model and vectorized image data is fed into the machine learning model.  
+<br />
 
- BMI = kgm^2
-where kg represents the person's weight and m^2 the person's squared height.
-
-#### About this BMI Calculator
-
-This BMI Calculator is for adults 20 years and older. Further information on calculating BMI for children and teenagers is available from the CDC [2].
-
-#### References
-1. Centers for Disease Control. [Body Mass Index (BMI)](httpswww.cdc.govhealthyweightassessingbmiindex.html), Accessed January 26, 2020.
-2. Centers for Disease Control. [BMI Percentile Calculator for Child and Teen](httpswww.cdc.govhealthyweightbmicalculator.html), Accessed January 26, 2020.
+#### About this MathX Recognizer
+In this shiny project, we shows descriptive, exploratory and predictive analysis on mathematical expression.

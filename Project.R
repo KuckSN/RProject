@@ -7,6 +7,11 @@ character <- c("subtract_indexes", 'leftP_indexes', "rightP_indexes", "plus_inde
                "nine_indexes", "div_indexes", "mul_indexes")
 regex <- c("-", "\\(", ")", "\\+", "=", "0", "1", "2", "3", "4", "5","6", "7","8","9", "div", "X")
 
+character_list <- list("-" = subtract_indexes, "(" = leftP_indexes, ")" = rightP_indexes,
+                       "+"= plus_indexes, "=" = equal_indexes, "0" = zero_indexes, "1" = one_indexes,
+                       "2" = two_indexes, "3" = three_indexes, "4" = four_indexes, "5" = five_indexes,
+                       "6" = six_indexes, "7" = seven_indexes, "8" = eight_indexes, "9" = nine_indexes,
+                       "x" = mul_indexes, "/" = div_indexes)
 
 #Process image unto vector
 for(file in list.files(path = "C:\\Users\\kuckn\\Desktop\\Usable Data")) {
