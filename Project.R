@@ -94,6 +94,7 @@ symbols[rightP_indexes] <- 15
 symbols[equal_indexes] <- 16
 predictive_matrix <- cbind(symbols, pca$x) 
 
+
 #Model
 library(caret)
 model <- train(as.factor(symbols)~., data = predictive_matrix, trControl = trainControl(method = "LOOCV"), method = "rf")
@@ -101,3 +102,44 @@ model <- train(as.factor(symbols)~., data = predictive_matrix, trControl = train
 #See Model Summary
 #model
 #model$finalModel
+
+
+
+##### WJ
+library(ggplot2)
+library(tidyr)
+
+# first plot
+exp = 8 # change this to show diff img
+idxListPicked = switch(exp, subtract_indexes, leftP_indexes, rightP_indexes, plus_indexes, equal_indexes,zero_indexes, one_indexes, two_indexes,three_indexes, four_indexes, five_indexes, six_indexes, seven_indexes, eight_indexes, nine_indexes, mul_indexes, div_indexes)
+random = sample(idxListPicked, 1)
+image_1 = matrix(unlist(small_matrix[random,]), nrow=45, ncol=45)
+image_1 = as.data.frame(t(image_1))
+colnames(image_1) <- seq_len(ncol(image_1))
+image_1$y <- seq_len(nrow(image_1))
+image_1 <- gather(image_1, "x", "value", -y)
+image_1$x <- as.integer(image_1$x)
+
+ggplot(image_1, aes(x = x, y = y, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "black", na.value = NA) +
+  scale_y_reverse() +
+  theme_minimal() +
+  theme(panel.grid = element_blank())   +
+  theme(aspect.ratio = 1) +
+  xlab("") +
+  ylab("")
+
+## second plot
+## press button to show again, will pick diff image every time
+par(mfcol=c(5,4))
+par(mar=c(0,0,1.5,0), xaxs='i', yaxs='i')
+for (i in 1:17){
+  idxListPicked = switch(i, subtract_indexes, leftP_indexes, rightP_indexes, plus_indexes, equal_indexes,zero_indexes, one_indexes, two_indexes,three_indexes, four_indexes, five_indexes, six_indexes, seven_indexes, eight_indexes, nine_indexes, mul_indexes, div_indexes)
+  rand = sample(idxListPicked, 1)
+  img = small_matrix[rand, ]
+  img = matrix(unlist(img), nrow=45, ncol=45)
+  img = img[, ncol(img):1]
+  image(1:45, 1:45, img, col = gray((0:255)/255), xaxt = 'n', yaxt = 'n',
+        main = paste(small_y[rand]))
+}
