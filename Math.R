@@ -23,6 +23,7 @@ library(shinythemes)
 library(data.table)
 library(rvest)
 library(randomForest)
+library(factoextra)
 
 
 webpage = read_html("https://raw.githubusercontent.com/dataprofessor/data/master/weather-weka.csv")
@@ -71,8 +72,8 @@ ui <- fluidPage(theme =  shinytheme("united"),
                                                        sidebarPanel(
                                                          HTML("<h3>Peek the data</h3>"),
                                                          
-                                                         sliderInput("numberHead", label = "Display First n rows:",
-                                                                     min = 5, max = 17016,
+                                                         numericInput("numberHead", label = "Display First n rows:",
+                                                                     min = 1, max = 17016,
                                                                      value = 5),
                                                          
                                                          actionButton("headButton", "Submit", class = "btn btn-primary"),
@@ -89,30 +90,30 @@ ui <- fluidPage(theme =  shinytheme("united"),
                                                          HTML("<h3>Wonder How Image Data Looks Like?</h3>"),
                                                          
                                                          numericInput("dataRow", label = "Visualize which row?", 
-                                                                      min = 1, max = 17016,
+                                                                      min = 1, max = 17,
                                                                       value = 1),
                                                          
                                                          actionButton("imageButton", "Submit", class = "btn btn-primary"),
                                                          
                                                          HTML("<br /> <h5>Notes:  <br />
-                                                              \"-\": 1-1000  <br />
-                                                              \"(\": 1001-2001  <br />
-                                                              \")\": 2002-3002  <br />
-                                                              \"+\": 3003-4003  <br />
-                                                              \"=\": 4004-5004  <br />
-                                                              \"0\": 5005-6005  <br />
-                                                              \"/\": 6006-6873  <br />
-                                                              \"x\": 6874-8007  <br />
-                                                              \"1\": 8008-9008  <br />
-                                                              \"2\": 9009-10009  <br />
-                                                              \"3\": 10010-11010  <br />
-                                                              \"4\": 11011-12011  <br />
-                                                              \"5\": 12012-13012  <br />
-                                                              \"6\": 13013-14013  <br />
-                                                              \"7\": 14014-15014  <br />
-                                                              \"8\": 15015-16015  <br />
-                                                              \"9\": 16016-17016    <br />
-                                                              </h5>")
+                                                              \"-\": 1  <br />
+                                                              \"(\": 2  <br />
+                                                              \")\": 3  <br />
+                                                              \"+\": 3  <br />
+                                                              \"=\": 5  <br />
+                                                              \"0\": 6  <br />
+                                                              \"/\": 7  <br />
+                                                              \"x\": 8  <br />
+                                                              \"1\": 9  <br />
+                                                              \"2\": 10  <br />
+                                                              \"3\": 11  <br />
+                                                              \"4\": 12  <br />
+                                                              \"5\": 13  <br />
+                                                              \"6\": 14  <br />
+                                                              \"7\": 15  <br />
+                                                              \"8\": 16  <br />
+                                                              \"9\": 17    <br />
+                                                              </h5>"),
                                                        ),
                                                        
                                                        mainPanel(
@@ -120,7 +121,21 @@ ui <- fluidPage(theme =  shinytheme("united"),
                                                          h3("Image"),
                                                          plotOutput("individualImage"),
                                                          h3("Raw Data"),
-                                                         dataTableOutput("rawData")
+                                                         dataTableOutput("rawData"),
+                                                       )),
+                                              
+                                              tabPanel("All Symbols Image",
+                                                       sidebarPanel(
+                                                         HTML("<h3>Wonder How Image Data Looks Like?</h3>"),
+                                                         
+                                                         HTML("<h4>Show All Randomized Symbols</h4>"),
+                                                         
+                                                         actionButton("allButton", "Submit", class = "btn btn-primary"),
+                                                       ),
+                                                       
+                                                       mainPanel(
+                                                         h3("All Randomized Symbols"),
+                                                         plotOutput("allImage")
                                                        )),
                                               
                                               tabPanel("Data Summary",
@@ -149,7 +164,11 @@ ui <- fluidPage(theme =  shinytheme("united"),
                            tabPanel("Data Analysis",
                                     titlePanel("Relationship between Symbol Cluster & their pixel"),
                                     sidebarLayout(
-                                      sidebarPanel = sidebarPanel("Observe the symbols and their pixel points on graph",
+                                      sidebarPanel = sidebarPanel(HTML("<h3>PCA Scatter Plot</h3>"),
+                                                                  
+                                                                  HTML("<h5>Observe the symbols and their pixel points on graph</h5>"),
+                                                                  
+                                                                  
                                                                   numericInput('point1', "Point 1", 
                                                                                min = 1, max = 2025,
                                                                                value = 1),
@@ -166,13 +185,28 @@ ui <- fluidPage(theme =  shinytheme("united"),
                                                                   
                                                                   textInput("pointColour", label = "Colour of Point", value = "violetred2"),
                                                                   
-                                                                  actionButton("pcaPlotButton", "Submit", class = "btn btn-primary")
+                                                                  checkboxInput("scaled", "Scaled PCA Value?", value = TRUE),
+                                                                  
+                                                                  actionButton("pcaPlotButton", "Submit", class = "btn btn-primary"),
+                                                                  
+                                                                  HTML("<h3>Scree Plot</h3>"),
+                                                                  
+                                                                  numericInput("pcaScree", "How many points of PCA to analyse?", 
+                                                                               min = 10, max = 2025,
+                                                                               value = 100),
+                                                                  
+                                                                  checkboxInput("scaledScree", "Scaled PCA Value?", value = TRUE),
+                                                                  
+                                                                  actionButton("screePlotButton", "Submit", class = "btn btn-primary"),
                                                                   ),
                                       
                                       mainPanel = mainPanel(
                                         tags$label(h2("PCA Scatter Plot")),
                                         h4("Principal Component Analysis (PCA) is transforming the values of each pixel using standard deviation, mean and rotation and gives meaning to each pixel with correlation to each other."),
-                                        plotOutput("pcaPlot")
+                                        plotOutput("pcaPlot"),
+                                        h2("Scree Plot"),
+                                        h4("Visualize eigenvalues (scree plot). Show the percentage of variances explained by each principal component."),
+                                        plotOutput("screePlot")
                                       )
                                     )),
                            
@@ -214,13 +248,17 @@ server <- function(input, output, session) {
   
   # Second tabPanel - Image Views
   imageViewInput <- reactive({
-    image <- visualize_image(input$dataRow)
+    randomized_image(input$dataRow)
   })
   
   
   datatableRaw <- reactive({
-    raw <- data.frame(get_visualize_image(input$dataRow))
+    raw <- get_randomized_image(input$dataRow)
     print(raw)
+  })
+  
+  allImage <- reactive({
+    all_randomized_image()
   })
   
   output$individualImage <- renderPlot({
@@ -234,6 +272,13 @@ server <- function(input, output, session) {
       isolate(datatableRaw())
     }
   },options = list(scrollX = TRUE, fixedColumns = list(leftColumns = 2)))
+  
+  output$allImage <- renderPlot({
+    if(input$allButton>0){
+      isolate(allImage())
+    }
+  })
+  
 
   # Second tabPanel - Data Summary
   dimPlot <- reactive({
@@ -262,12 +307,22 @@ server <- function(input, output, session) {
   
   # Third tabPanel - Data Analysis
   pcaPlot <- reactive({
-    colour(character_list[[input$character]], input$pointColour, input$point1, input$point2)
+    colour(character_list[[input$character]], input$pointColour, input$point1, input$point2, input$scaled)
   })
 
   output$pcaPlot <- renderPlot({
     if(input$pcaPlotButton>0){
       isolate(pcaPlot())
+    }
+  })
+  
+  screePlot <- reactive({
+    eig_visualizer(input$pcaScree, input$scaledScree)
+  })
+  
+  output$screePlot <- renderPlot({
+    if(input$screePlotButton>0){
+      isolate(screePlot())
     }
   })
 }

@@ -110,7 +110,7 @@ library(ggplot2)
 library(tidyr)
 
 # first plot
-exp = 8 # change this to show diff img
+exp = 7 # change this to show diff img
 idxListPicked = switch(exp, subtract_indexes, leftP_indexes, rightP_indexes, plus_indexes, equal_indexes,zero_indexes, one_indexes, two_indexes,three_indexes, four_indexes, five_indexes, six_indexes, seven_indexes, eight_indexes, nine_indexes, mul_indexes, div_indexes)
 random = sample(idxListPicked, 1)
 image_1 = matrix(unlist(small_matrix[random,]), nrow=45, ncol=45)
