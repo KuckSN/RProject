@@ -13,7 +13,7 @@ character_list <- list("-" = subtract_indexes, "(" = leftP_indexes, ")" = rightP
                        "6" = six_indexes, "7" = seven_indexes, "8" = eight_indexes, "9" = nine_indexes,
                        "x" = mul_indexes, "/" = div_indexes)
 
-#Process image unto vector
+#Process image into vector
 for(file in list.files(path = "C:\\Users\\kuckn\\Desktop\\Usable Data")) {
   current_file <- file
   print(paste("Processing:", file, sep=" "))
@@ -30,10 +30,10 @@ for(file in list.files(path = "C:\\Users\\kuckn\\Desktop\\Usable Data")) {
 pca <- prcomp(small_matrix)
 scaled_pca <- prcomp(small_matrix, scale. = TRUE)
 
-#Havent tried scaled_pca
+# PCA Scatter Plot
 plot(pca$x[, c(1, 2)])
 
-#Group each character 
+# Group each character 
 subtract_indexes <- grep(rownames(pca$x), pattern = "-")
 leftP_indexes <- grep(rownames(pca$x), pattern = "\\(")
 rightP_indexes <- grep(rownames(pca$x), pattern = ")")
@@ -52,7 +52,7 @@ nine_indexes <- grep(rownames(pca$x), pattern = "9")
 div_indexes <- grep(rownames(pca$x), pattern = "div")
 mul_indexes <- grep(rownames(pca$x), pattern = "X")
 
-#Colour each character on the plot
+# Colour each character on the plot
 points(pca$x[subtract_indexes, 1:2], col = "violetred2")
 points(pca$x[leftP_indexes, 1:2], col = "gray")
 points(pca$x[rightP_indexes, 1:2], col = "brown")
@@ -72,8 +72,8 @@ points(pca$x[div_indexes, 1:2], col = "green")
 points(pca$x[mul_indexes, 1:2], col = "green4")
 
 
-#Prediction
-#Multiclassing
+# Prediction
+# Multiclassing
 symbols <- rep(0, times = nrow(pca$x))
 symbols[zero_indexes] <- 0
 symbols[one_indexes] <- 1
@@ -95,9 +95,12 @@ symbols[equal_indexes] <- 16
 predictive_matrix <- cbind(symbols, pca$x) 
 
 
-#Model
+# Model
 library(caret)
-model <- train(as.factor(symbols)~., data = predictive_matrix, trControl = trainControl(method = "LOOCV"), method = "rf")
+model <- caret::train(y = as.vector(symbols), x=pca$x, method = "rf", trControl = trainControl(method = 'LOOCV', verboseIter = TRUE))
+
+# This is for testing
+small_model <- caret::train(y = as.vector(small_symbols), x = small, method = "rf", trControl = trainControl(method = "LOOCV", verboseIter = TRUE))
 
 #See Model Summary
 #model
@@ -137,9 +140,17 @@ par(mar=c(0,0,1.5,0), xaxs='i', yaxs='i')
 for (i in 1:17){
   idxListPicked = switch(i, subtract_indexes, leftP_indexes, rightP_indexes, plus_indexes, equal_indexes,zero_indexes, one_indexes, two_indexes,three_indexes, four_indexes, five_indexes, six_indexes, seven_indexes, eight_indexes, nine_indexes, mul_indexes, div_indexes)
   rand = sample(idxListPicked, 1)
-  img = small_matrix[rand, ]
   img = matrix(unlist(img), nrow=45, ncol=45)
   img = img[, ncol(img):1]
   image(1:45, 1:45, img, col = gray((0:255)/255), xaxt = 'n', yaxt = 'n',
         main = paste(small_y[rand]))
 }
+
+# Data Summary
+factor_small_y <- as.factor(small_y)
+summary(factor_small_y)
+
+summary(small_y)
+dim(frame_small_matrix)
+sum_small_matrix <- summary(frame_small_matrix)
+str_small_matrix <- str(frame_small_matrix)
