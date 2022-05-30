@@ -93,25 +93,20 @@ all_randomized_image <- function(){
 
 ###############
 ##  Summary  ##
-############3##
-factor_small_y <- as.factor(small_y)
-summary(factor_small_y)
+###############
 
-
-summary(small_y)
-dim(frame_small_matrix)
-sum_small_matrix <- summary(frame_small_matrix)
-str_small_matrix <- str(frame_small_matrix)
-
+y_summary <- function(){
+  df = sort(table(small_y))
+  df = as.data.frame(df)
+  names(df)[1] = 'symbols'
+  barplot(height=df$Freq, names=df$symbols,
+          col='#AC92EC', main="Distribution of Symbols in Test Set",
+          xlab="Symbols", ylab="Frequency")
+}
 
 ######################
 ##  PCA Visualizer  ##
 ######################
-##Havent tried these visualization
-
-# install.packages("factoextra")
-# library(factoextra)
-
 #Visualize eigenvalues (scree plot). Show the percentage of variances explained by each principal component.
 eig_visualizer <- function(ncp_num, scaled){
   if(scaled){
@@ -120,8 +115,6 @@ eig_visualizer <- function(ncp_num, scaled){
     fviz_eig(pca, ncp = ncp_num)
   }
 }
-
-
 
 #Graph of individuals. Individuals with a similar profile are grouped together.
 # fviz_pca_ind(pca,
@@ -153,7 +146,6 @@ colour <- function(index, cols, x, y, truth){
 ################
 ##  ML Model  ##
 ################
-#havent trained yet
 
 #model
 #model$finalModel

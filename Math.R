@@ -25,8 +25,9 @@ library(rvest)
 library(randomForest)
 library(factoextra)
 library(base64enc)
-
 options(shiny.maxRequestSize = 30*1024^2)
+library(ggplot2)
+library(tidyr)
 
 
 webpage = read_html("https://raw.githubusercontent.com/dataprofessor/data/master/weather-weka.csv")
@@ -295,6 +296,10 @@ server <- function(input, output, session) {
   
 
   # Second tabPanel - Data Summary
+  barShinyPlot <- reactive({
+    y_summary()
+  })
+  
   dimPlot <- reactive({
     cbind(c("Rows", "Columns"), dim(frame_small_matrix))
   })
@@ -305,6 +310,10 @@ server <- function(input, output, session) {
   
   sumPlot <- reactive({
     sum_small_matrix[,1]
+  })
+  
+  output$summaryPlot <- renderPlot({
+    isolate(barShinyPlot())
   })
   
   output$dimension <- renderPrint({
