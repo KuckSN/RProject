@@ -17,36 +17,16 @@ view_matrix <- function(x){
 ################
 ## Visualizer ##
 ############3###
-visualize_image <- function(x){
-  image_matrix <- matrix(0, ncol = 45, nrow = 45)
-  for(i in 0:44){
-    #Debug
-    #print(paste("Pass:", i))
-    
-    image_matrix[i+1, 1:45] <- small_matrix[(x), (45*i+1) : (45*(i+1))]
-  }
-  
-  plot(as.raster(image_matrix, max=255))
-}
-
-get_visualize_image <- function(x){
-  image_matrix <- matrix(0, ncol = 45, nrow = 45)
-  for(i in 0:44){
-    #Debug
-    #print(paste("Pass:", i))
-    
-    image_matrix[i+1, 1:45] <- small_matrix[(x), (45*i+1) : (45*(i+1))]
-  }
-  image_matrix <- cbind(c(paste("Pixel", 1:45, sep = "")), image_matrix)
-  colnames(image_matrix) <- c("V/H Pixel", paste("Pixel", 1:45, sep = ""))
-  image_matrix
-}
-
-randomized_image <- function(x){
-  # first plot
-  exp = x # change this to show diff img
+get_random <- function(x){
+  exp = x
   idxListPicked = switch(exp, subtract_indexes, leftP_indexes, rightP_indexes, plus_indexes, equal_indexes,zero_indexes, one_indexes, two_indexes,three_indexes, four_indexes, five_indexes, six_indexes, seven_indexes, eight_indexes, nine_indexes, mul_indexes, div_indexes)
   random = sample(idxListPicked, 1)
+  random
+}
+
+randomized_image <- function(random_pick){
+  # first plot
+  random = random_pick
   
   image_1 = matrix(unlist(small_matrix[random,]), nrow=45, ncol=45)
   image_1 = as.data.frame(t(image_1))
@@ -66,10 +46,8 @@ randomized_image <- function(x){
     ylab("")
 }
 
-get_randomized_image <- function(x){
-  exp = x # change this to show diff img
-  idxListPicked = switch(exp, subtract_indexes, leftP_indexes, rightP_indexes, plus_indexes, equal_indexes,zero_indexes, one_indexes, two_indexes,three_indexes, four_indexes, five_indexes, six_indexes, seven_indexes, eight_indexes, nine_indexes, mul_indexes, div_indexes)
-  random = sample(idxListPicked, 1)
+get_randomized_image <- function(random_pick){
+  random = random_pick
   image_1 = matrix(unlist(small_matrix[random,]), nrow=45, ncol=45)
   image_1 = as.data.frame(t(image_1))
   print(image_1)

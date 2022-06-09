@@ -10,12 +10,6 @@
 #install_tensorflow()
 #intsall_keras()
 
-####################################
-# Data Professor                   #
-# http://youtube.com/dataprofessor #
-# http://github.com/dataprofessor  #
-####################################
-
 
 # Import libraries
 library(shiny)
@@ -29,28 +23,13 @@ options(shiny.maxRequestSize = 30*1024^2)
 library(ggplot2)
 library(tidyr)
 
-
-webpage = read_html("https://raw.githubusercontent.com/dataprofessor/data/master/weather-weka.csv")
-heading = html_node(webpage, 'body')
-# Read data
-weather <- read.csv(text = html_text(heading))
-weather$outlook <- factor(weather$outlook, levels = c("overcast", "rainy", "sunny"))
-weather$play <- factor(weather$play, levels = c("no", "yes"))
-                          
-# Build model
-model <- randomForest(play ~ ., data = weather, ntree = 500, mtry = 4, importance = TRUE)
-
-# Save model to RDS file
-# saveRDS(model, "model.rds")
-
-# Read in the RF model
-#model <- readRDS("model.rds")
-
+print("Please download mainData.R and load it to your environment before running this Shiny Apps.")
+load(file = "mainData.RData", envir = .GlobalEnv)
 ####################################
 # User interface                   #
 ####################################
 
-ui <- fluidPage(#theme =  shinytheme("united"),
+ui <- fluidPage(theme =  shinytheme("united"),
                 navbarPage("MathX Recognizer:",
                            tabPanel("Main",
                                     # Input values
@@ -144,10 +123,20 @@ ui <- fluidPage(#theme =  shinytheme("united"),
                                               
                                               tabPanel("Data Summary",
                                                        sidebarPanel(
-                                                         HTML("<h3>What Plot</h3>"),
-                                                         selectInput("plot", "Your Chosen Plot", choices = list("Plot A" = "plotA",
-                                                                                                                "Plot B" = "plotB", 
-                                                                                                                "Plot C" = "plotC"))
+                                                         HTML("<h3>Data Summary  <br /></h3>"),
+                                                         HTML("<h4>In this section, we will display descriptive and exploratory analysis on our image dataset.  <br /></h4>"),
+                                                         
+                                                         HTML("<h3>EDA - Bar Plot   <br /></h3>"),
+                                                         HTML("<h4>This first analysis is EDA, using Bar Chart  <br /></h4>"),
+                                                         
+                                                         HTML("<h3>Descriptive Analysis - Dimension   <br /></h3>"),
+                                                         HTML("<h4>The second analysis is descriptive, using dim() function. This section tells you about the dimension of our dataset  <br /></h4>"),
+                                                         
+                                                         HTML("<h3>Descriptive Analysis - Summary   <br /></h3>"),
+                                                         HTML("<h4>The third analysis is descriptive, using summary() function. This section obtain the value of min, max, Q1, Q2, Q3 and Q4  <br /></h4>"),
+                                                         
+                                                         HTML("<h3>Descriptive Analysis - Structure   <br /></h3>"),
+                                                         HTML("<h4>The last analysis is descriptive, using str() function. This section show you the structure of our dartaset.  <br /></h4>"),
                                                        ),
                                                        
                                                        mainPanel(
@@ -215,7 +204,7 @@ ui <- fluidPage(#theme =  shinytheme("united"),
                                     )),
                            
                            tabPanel("About",
-                                    titlePanel("About"),
+                                    HTML("<h1>About</h1>"),
                                     div(includeMarkdown("about.md"),
                                         align="justify")         
                            )
@@ -262,22 +251,28 @@ server <- function(input, output, session) {
   }, options = list(scrollX = TRUE, fixedColumns = list(leftColumns = 2)))
   
   # Second tabPanel - Image Views
-  imageViewInput <- reactive({
-    randomized_image(input$dataRow)
-  })
+  a = reactiveVal(0);
+  
+  get_rand <- function(){
+    a(get_random(input$dataRow))
+  }
+  
+  imageViewInput <- function(){
+    randomized_image(a())
+  }
   
   
   datatableRaw <- reactive({
-    raw <- get_randomized_image(input$dataRow)
-    print(raw)
+    raw <- get_randomized_image(a())
   })
   
-  allImage <- reactive({
+  allImage <- function(){
     all_randomized_image()
-  })
+  }
   
   output$individualImage <- renderPlot({
     if(input$imageButton>0){
+      get_rand()
       isolate(imageViewInput())
     }
   })
@@ -290,9 +285,9 @@ server <- function(input, output, session) {
   
   output$allImage <- renderPlot({
     if(input$allButton>0){
-      isolate(allImage())
+      allImage()
     }
-  })
+  }, height = 500, width = 500  )
   
 
   # Second tabPanel - Data Summary
@@ -329,9 +324,9 @@ server <- function(input, output, session) {
   })
   
   # Third tabPanel - Data Analysis
-  pcaPlot <- reactive({
+  pcaPlot <- function(){
     colour(character_list[[input$character]], input$pointColour, input$point1, input$point2, input$scaled)
-  })
+  }
 
   output$pcaPlot <- renderPlot({
     if(input$pcaPlotButton>0){
@@ -339,9 +334,9 @@ server <- function(input, output, session) {
     }
   })
   
-  screePlot <- reactive({
+  screePlot <- function(){
     eig_visualizer(input$pcaScree, input$scaledScree)
-  })
+  }
   
   output$screePlot <- renderPlot({
     if(input$screePlotButton>0){
