@@ -24,6 +24,8 @@ library(data.table)
 library(rvest)
 library(randomForest)
 library(factoextra)
+library(base64enc)
+options(shiny.maxRequestSize = 30*1024^2)
 library(ggplot2)
 library(tidyr)
 
@@ -48,23 +50,23 @@ model <- randomForest(play ~ ., data = weather, ntree = 500, mtry = 4, importanc
 # User interface                   #
 ####################################
 
-ui <- fluidPage(theme =  shinytheme("united"),
+ui <- fluidPage(#theme =  shinytheme("united"),
                 navbarPage("MathX Recognizer:",
                            tabPanel("Main",
                                     # Input values
                                     sidebarPanel(
                                       HTML("<h3>Image to Math Expression</h3>"),
                                       
-                                      fileInput("image", label = "Please Select an Image:", accept = "image/*"),
+                                      fileInput("upload", label = "Please Select an Image:", accept = "image/*"),
                                      
                                       actionButton("submitbutton", "Submit", class = "btn btn-primary")
                                     ),
                                     
                                     mainPanel(
                                       tags$label(h3('Status/Output')), # Status/Output Text Box
-                                      verbatimTextOutput('contents'),
-                                      uiOutput('uploadedImage'), #Show Uploaded Image
-                                      textOutput("predictedExpression")
+                                      h4("The uploaded image :"),
+                                      uiOutput("image"), #Show Uploaded Image
+                                      h4("predicted Expression : ")
                                     )
                                     
                            ),
@@ -229,12 +231,23 @@ ui <- fluidPage(theme =  shinytheme("united"),
 server <- function(input, output, session) {
   
   # First tabPanel - Main
-  observeEvent(input$image, {
-    inFile <- input$image
-    if (!is.null(inFile)){
-      
+  base64 <- reactive({
+    inFile <- input[["upload"]]
+    if(!is.null(inFile)){
+      dataURI(file = inFile$datapath, mime = "image/*")
     }
   })
+  
+  output[["image"]] <- renderUI({
+    if(!is.null(base64())){
+      tags$div(
+        tags$img(src= base64(), width="100%"),
+        style = "width: 300px;"
+        )
+      }
+    })
+  
+    
   
   # Second tabPanel - Data Table
   datatableInput <- reactive({
