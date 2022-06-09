@@ -3,6 +3,10 @@
 Mathematical Expression Recognizer (MathX Recognizer) is essentially a Machine Learning model trained to recognize mathematical expression into text form that can be computed by computers.  
 <br />
 
+### **Pre-resquisite**
+Please download mainData.RData from "Download Data Space" folder and put it into the same file as your cloned project.  
+<br />
+
 ### **How to use MathX Recognizer**
 In the "Main" tab, users only have to upload an image of mathematical expression. Then, our machine learning model will predict read the mathematical expression from the image and compute the result of the mathematical expression. Result of the mathematical expression will be return to the user.    
 <br /> 
