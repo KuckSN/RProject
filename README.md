@@ -4,7 +4,7 @@ Mathematical Expression Recognizer (MathX Recognizer) is essentially a Machine L
 <br />
 
 ### **Pre-resquisite**
-Please download mainData.RData from "Download Data Space" folder and put it into the same file as your cloned project.  
+Please download mainData.RData from "Download Data Space Here" folder and put it into the same file as your cloned project.  
 <br />
 
 ### **How to use MathX Recognizer**
