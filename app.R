@@ -15,16 +15,135 @@
 library(shiny)
 library(shinythemes)
 library(data.table)
-library(rvest)
-library(randomForest)
+library(markdown)
 library(factoextra)
 library(base64enc)
-options(shiny.maxRequestSize = 30*1024^2)
 library(ggplot2)
 library(tidyr)
 
 print("Please download mainData.R and load it to your environment before running this Shiny Apps.")
 load(file = "mainData.RData", envir = .GlobalEnv)
+################################
+## Loading Necessary Variable ##
+################################
+subtract_indexes <- grep(rownames(pca$x), pattern = "-")
+leftP_indexes <- grep(rownames(pca$x), pattern = "\\(")
+rightP_indexes <- grep(rownames(pca$x), pattern = ")")
+plus_indexes <- grep(rownames(pca$x), pattern = "\\+")
+equal_indexes <- grep(rownames(pca$x), pattern = "=")
+zero_indexes <- grep(rownames(pca$x), pattern = "0")
+one_indexes <- grep(rownames(pca$x), pattern = "1")
+two_indexes <- grep(rownames(pca$x), pattern = "2")
+three_indexes <- grep(rownames(pca$x), pattern = "3")
+four_indexes <- grep(rownames(pca$x), pattern = "4")
+five_indexes <- grep(rownames(pca$x), pattern = "5")
+six_indexes <- grep(rownames(pca$x), pattern = "6")
+seven_indexes <- grep(rownames(pca$x), pattern = "7")
+eight_indexes <- grep(rownames(pca$x), pattern = "8")
+nine_indexes <- grep(rownames(pca$x), pattern = "9")
+div_indexes <- grep(rownames(pca$x), pattern = "div")
+mul_indexes <- grep(rownames(pca$x), pattern = "X")
+
+character_list <- list("-" = subtract_indexes, "(" = leftP_indexes, ")" = rightP_indexes,
+                       "+"= plus_indexes, "=" = equal_indexes, "0" = zero_indexes, "1" = one_indexes,
+                       "2" = two_indexes, "3" = three_indexes, "4" = four_indexes, "5" = five_indexes,
+                       "6" = six_indexes, "7" = seven_indexes, "8" = eight_indexes, "9" = nine_indexes,
+                       "x" = mul_indexes, "/" = div_indexes)
+####################
+## Matrix Display ##
+## Tabulated Data ##
+####################
+view_matrix <- function(x){
+  temp <- cbind(head(small_y, x), head(frame_small_matrix, x))
+  colnames(temp) <- c("Symbol", paste("Pixel", 1:2025, sep = ""))
+  temp
+}
+
+################
+## Visualizer ##
+############3###
+get_random <- function(x){
+  exp = x
+  idxListPicked = switch(exp, subtract_indexes, leftP_indexes, rightP_indexes, plus_indexes, equal_indexes,zero_indexes, one_indexes, two_indexes,three_indexes, four_indexes, five_indexes, six_indexes, seven_indexes, eight_indexes, nine_indexes, mul_indexes, div_indexes)
+  random = sample(idxListPicked, 1)
+  random
+}
+
+randomized_image <- function(random_pick){
+  # first plot
+  random = random_pick
+  
+  image_1 = matrix(unlist(frame_small_matrix[random,]), nrow=45, ncol=45)
+  image_1 = as.data.frame(t(image_1))
+  colnames(image_1) <- seq_len(ncol(image_1))
+  image_1$y <- seq_len(nrow(image_1))
+  image_1 <- gather(image_1, "x", "value", -y)
+  image_1$x <- as.integer(image_1$x)
+  
+  ggplot(image_1, aes(x = x, y = y, fill = value)) +
+    geom_tile() +
+    scale_fill_gradient(low = "white", high = "black", na.value = NA) +
+    scale_y_reverse() +
+    theme_minimal() +
+    theme(panel.grid = element_blank())   +
+    theme(aspect.ratio = 1) +
+    xlab("") +
+    ylab("")
+}
+
+get_randomized_image <- function(random_pick){
+  random = random_pick
+  image_1 = matrix(unlist(frame_small_matrix[random,]), nrow=45, ncol=45)
+  image_1 = as.data.frame(t(image_1))
+  print(image_1)
+}
+
+all_randomized_image <- function(){
+  ## second plot
+  ## press button to show again, will pick diff image every time
+  par(mfcol=c(5,4))
+  par(mar=c(0,0,1.5,0), xaxs='i', yaxs='i')
+  for (i in 1:17){
+    idxListPicked = switch(i, subtract_indexes, leftP_indexes, rightP_indexes, plus_indexes, equal_indexes,zero_indexes, one_indexes, two_indexes,three_indexes, four_indexes, five_indexes, six_indexes, seven_indexes, eight_indexes, nine_indexes, mul_indexes, div_indexes)
+    rand = sample(idxListPicked, 1)
+    img = frame_small_matrix[rand, ]
+    img = matrix(unlist(img), nrow=45, ncol=45)
+    img = img[, ncol(img):1]
+    image(1:45, 1:45, img, col = gray((0:255)/255), xaxt = 'n', yaxt = 'n',
+          main = paste(small_y[rand]))
+  }
+}
+
+###############
+##  Summary  ##
+###############
+
+y_summary <- function(){
+  df = sort(table(small_y))
+  df = as.data.frame(df)
+  names(df)[1] = 'symbols'
+  barplot(height=df$Freq, names=df$symbols,
+          col='#AC92EC', main="Distribution of Symbols in Test Set",
+          xlab="Symbols", ylab="Frequency")
+}
+
+######################
+##  PCA Visualizer  ##
+######################
+#Visualize eigenvalues (scree plot). Show the percentage of variances explained by each principal component.
+eig_visualizer <- function(ncp_num){
+  fviz_eig(pca, ncp = ncp_num)
+}
+
+#################
+##  PCA Color  ##
+#################
+colour <- function(index, cols, x, y){
+  plot(pca$x[, c(x, y)])
+  points(pca$x[index, c(x, y)], col = cols)
+}
+
+#load(file = "mainData.RData", envir = .GlobalEnv)
 ####################################
 # User interface                   #
 ####################################
@@ -178,8 +297,6 @@ ui <- fluidPage(theme =  shinytheme("united"),
                                                                   
                                                                   textInput("pointColour", label = "Colour of Point", value = "violetred2"),
                                                                   
-                                                                  checkboxInput("scaled", "Scaled PCA Value?", value = TRUE),
-                                                                  
                                                                   actionButton("pcaPlotButton", "Submit", class = "btn btn-primary"),
                                                                   
                                                                   HTML("<h3>Scree Plot</h3>"),
@@ -187,8 +304,6 @@ ui <- fluidPage(theme =  shinytheme("united"),
                                                                   numericInput("pcaScree", "How many points of PCA to analyse?", 
                                                                                min = 10, max = 2025,
                                                                                value = 100),
-                                                                  
-                                                                  checkboxInput("scaledScree", "Scaled PCA Value?", value = TRUE),
                                                                   
                                                                   actionButton("screePlotButton", "Submit", class = "btn btn-primary"),
                                                                   ),
@@ -272,7 +387,7 @@ server <- function(input, output, session) {
   
   output$individualImage <- renderPlot({
     if(input$imageButton>0){
-      get_rand()
+      isolate(get_rand())
       isolate(imageViewInput())
     }
   })
@@ -304,6 +419,7 @@ server <- function(input, output, session) {
   })
   
   sumPlot <- reactive({
+    sum_small_matrix <- summary(frame_small_matrix)
     sum_small_matrix[,1]
   })
   
@@ -325,7 +441,7 @@ server <- function(input, output, session) {
   
   # Third tabPanel - Data Analysis
   pcaPlot <- function(){
-    colour(character_list[[input$character]], input$pointColour, input$point1, input$point2, input$scaled)
+    colour(character_list[[input$character]], input$pointColour, input$point1, input$point2)
   }
 
   output$pcaPlot <- renderPlot({
@@ -335,7 +451,7 @@ server <- function(input, output, session) {
   })
   
   screePlot <- function(){
-    eig_visualizer(input$pcaScree, input$scaledScree)
+    eig_visualizer(input$pcaScree)
   }
   
   output$screePlot <- renderPlot({
@@ -345,22 +461,8 @@ server <- function(input, output, session) {
   })
 }
 
-# h2("Summary Plot"),
-# plotOutput("summaryPlot"),
-# h2("Dimension"),
-# tableOutput("dimension"),
-# h2("Structure"),
-# tableOutput("str"),
-# h2("6 Summary Value of First Image"),
-# tableOutput("summary")
 
 ####################################
 # Create the shiny app             #
 ####################################
 shinyApp(ui = ui, server = server)
-
-
-#
-#fluidRow(
-#box(title = "", solidHeader = T, width = 8, collapsible = T, plotlyOutput("macro_plot"))
-#)

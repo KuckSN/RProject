@@ -1,0 +1,14 @@
+name: RProject
+title: RProject
+username:
+account: shakeit-mathx
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6461403
+bundleId: 5994660
+url: https://shakeit-mathx.shinyapps.io/rproject/
+when: 1654831497.44425
+lastSyncTime: 1654831497.44427
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: backup.RData|Data Visualizing.docx|Data Visualizing.pdf|dataSpace.RData|Documentation|old.RData
