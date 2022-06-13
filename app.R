@@ -191,13 +191,13 @@ ui <- fluidPage(theme =  shinytheme("united"),
                                                        sidebarPanel(
                                                          HTML("<h3>Wonder How Image Data Looks Like?</h3>"),
                                                          
-                                                         numericInput("dataRow", label = "Visualize which row?", 
+                                                         numericInput("dataRow", label = "Visualize which class of mathematical expression? Choose a number with guidance from hint.", 
                                                                       min = 1, max = 17,
                                                                       value = 1),
                                                          
                                                          actionButton("imageButton", "Submit", class = "btn btn-primary"),
                                                          
-                                                         HTML("<br /> <h5>Notes:  <br />
+                                                         HTML("<br /> <h5>Hints:  <br />
                                                               \"-\": 1  <br />
                                                               \"(\": 2  <br />
                                                               \")\": 3  <br />
@@ -232,11 +232,12 @@ ui <- fluidPage(theme =  shinytheme("united"),
                                                          
                                                          HTML("<h4>Show All Randomized Symbols</h4>"),
                                                          
-                                                         actionButton("allButton", "Submit", class = "btn btn-primary"),
+                                                         actionButton("allButton", "Generate", class = "btn btn-primary"),
                                                        ),
                                                        
                                                        mainPanel(
                                                          h3("All Randomized Symbols"),
+                                                         h4("p/s Random sample image will be chosen"),
                                                          plotOutput("allImage")
                                                        )),
                                               
