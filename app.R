@@ -371,8 +371,7 @@ server <- function(input, output, session) {
     })
   
    pressbtn <- observeEvent(input$submitbutton,{
-     url = "http://10.210.11.242:8080/api/predict"
-      #url = "https://wie2003handwriting-recognition-o2f2jvjewq-de.a.run.app/api/predict"
+      url = "https://wie2003handwriting-recognition-o2f2jvjewq-de.a.run.app/api/predict"
    post_zip = httr::POST(
        url = url,
        body = list(
