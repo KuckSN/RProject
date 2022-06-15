@@ -162,10 +162,14 @@ ui <- fluidPage(#theme =  shinytheme("united"),
                                     
                                     mainPanel(
                                       tags$label(h3('Status/Output')), # Status/Output Text Box
-                                      h4("The uploaded image :"),
+                                      h4("Uploaded image :"),
                                       uiOutput("image"), #Show Uploaded Image
-                                      h4("predicted Expression : "),
-                                      textOutput("expression")
+                                      h5("Predicted Expression : "),
+                                      textOutput("expression"),
+                                      h5("Character Confidence : "),
+                                      verbatimTextOutput("confidence"),
+                                      h4("What the AI Saw:"),
+                                      uiOutput("bbox_image")
                                     )
                                     
                            ),
@@ -336,6 +340,19 @@ ui <- fluidPage(#theme =  shinytheme("united"),
 
 server <- function(input, output, session) {
   
+  getImg <- function(txt) {
+    raw <- base64Decode(txt, mode="raw")
+    if (all(as.raw(c(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a))==raw[1:8])) { # it's a png...
+      img <- png::readPNG(raw)
+      transparent <- img[,,4] == 0
+      img <- as.raster(img[,,1:3])
+      img[transparent] <- NA
+    } else if (all(as.raw(c(0xff, 0xd8, 0xff, 0xd9))==raw[c(1:2, length(raw)-(1:0))])) { # it's a jpeg...
+      img <- jpeg::readJPEG(raw)
+    } else stop("No Image!")
+    return(img)
+  }
+  
   # First tabPanel - Main
   base64 <- reactive({
     inFile <- input[["upload"]]
@@ -348,13 +365,12 @@ server <- function(input, output, session) {
     if(!is.null(base64())){
       tags$div(
         tags$img(src= base64(), width="100%"),
-        style = "width: 300px;"
+        style = "width: 60vw;"
         )
       }
     })
   
    pressbtn <- observeEvent(input$submitbutton,{
-     print("yuyvhjyfuvhyfvhyivki")
       url = "https://wie2003handwriting-recognition-o2f2jvjewq-de.a.run.app/api/predict"
    post_zip = httr::POST(
        url = url,
@@ -364,8 +380,18 @@ server <- function(input, output, session) {
       httr::add_headers("Content-Type"="image/jpeg")
     )
     post_zip
-    exp = content(post_zip, "text")
-    output$text <- renderText({input$exp})
+    exp = content(post_zip, "parsed")
+    output$expression <- renderText({exp$prediction})
+    output$confidence <- renderText({exp$confidence})
+    output[["bbox_image"]] <- renderUI({
+      if(!is.null(exp$image)){
+        tags$div(
+          tags$img(src= paste("data:image/png;base64,",exp$image,sep=""), width="100%"),
+          style = "width: 60vw;margin-bottom:50px;"
+        )
+      }
+    })
+
   })
    
   
