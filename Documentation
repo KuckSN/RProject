@@ -1,4 +1,0 @@
-Arguments for prcomp():
-x: a numeric matrix or data frame
-scale: a logical value indicating whether the variables should be scaled to have unit variance before the analysis takes place
-

@@ -61,7 +61,7 @@ Usage: Alter "Amount of PCA Points" and press "Submit" to show the significance 
 
 ### **Data Science Process**
 #### **Asking Questions**
-1) Can I let computer recognizes mathematical expression through images? [predictive analysis]  <bt />
+1) Can I let computer recognizes mathematical expression through images? [predictive analysis]  <br />
 2) Can computer processes mathematical expression through images? [predictive analysis]  <br />
 3) What is the relationship between pca (counted from pixel) and the mathematical expression? [exploratory analysis]  <br />
 4) What are the mathematical expressions that our MathX Recognizer processes? [descriptive analysis]    

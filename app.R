@@ -20,6 +20,8 @@ library(base64enc)
 library(ggplot2)
 library(tidyr)
 library(httr)
+library(jpeg)
+library(png)
 
 print("Please download mainData.R and load it to your environment before running this Shiny Apps.")
 load(file = "mainData.RData", envir = .GlobalEnv)
@@ -148,7 +150,7 @@ colour <- function(index, cols, x, y){
 # User interface                   #
 ####################################
 
-ui <- fluidPage(#theme =  shinytheme("united"),
+ui <- fluidPage(theme =  shinytheme("united"),
                 navbarPage("MathX Recognizer:",
                            tabPanel("Main",
                                     # Input values
@@ -206,20 +208,20 @@ ui <- fluidPage(#theme =  shinytheme("united"),
                                                               \"-\": 1  <br />
                                                               \"(\": 2  <br />
                                                               \")\": 3  <br />
-                                                              \"+\": 3  <br />
+                                                              \"+\": 4  <br />
                                                               \"=\": 5  <br />
                                                               \"0\": 6  <br />
-                                                              \"/\": 7  <br />
-                                                              \"x\": 8  <br />
-                                                              \"1\": 9  <br />
-                                                              \"2\": 10  <br />
-                                                              \"3\": 11  <br />
-                                                              \"4\": 12  <br />
-                                                              \"5\": 13  <br />
-                                                              \"6\": 14  <br />
-                                                              \"7\": 15  <br />
-                                                              \"8\": 16  <br />
-                                                              \"9\": 17    <br />
+                                                              \"1\": 7  <br />
+                                                              \"2\": 8  <br />
+                                                              \"3\": 9  <br />
+                                                              \"4\": 10  <br />
+                                                              \"5\": 11  <br />
+                                                              \"6\": 12  <br />
+                                                              \"7\": 13  <br />
+                                                              \"8\": 14  <br />
+                                                              \"9\": 15  <br />
+                                                              \"x\": 16  <br />
+                                                              \"/\": 17  <br />
                                                               </h5>"),
                                                        ),
                                                        

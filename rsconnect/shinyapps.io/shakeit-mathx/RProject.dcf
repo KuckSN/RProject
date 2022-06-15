@@ -5,10 +5,10 @@ account: shakeit-mathx
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6461403
-bundleId: 5994660
+bundleId: 6009651
 url: https://shakeit-mathx.shinyapps.io/rproject/
-when: 1654831497.44425
-lastSyncTime: 1654831497.44427
+when: 1655289451.0284
+lastSyncTime: 1655289451.02842
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: backup.RData|Data Visualizing.docx|Data Visualizing.pdf|dataSpace.RData|Documentation|old.RData
+ignoredFiles: backup.RData|Data Visualizing.docx|Data Visualizing.pdf|dataSpace.RData|Documentation|file3ecc46a7c83.html|file3ecc7f62f91.html|file3ecc95c44b9.html|file41c014c13b53.html|file41c0159c2c2.html|file41c0168562d7.html|file41c035083116.html|file41c038527876.html|file41c0395347dc.html|file41c042e224.html|file41c047d970ed.html|file41c04b7d2fb.html|file41c061d3395f.html|file41c063f712db.html|file41c0648a3553.html|file41c0653d610.html|file41c0751945a6.html|file41c07d92672.html|file41c07dcaac3.html|file41c07e807f64.html|Image.png|Main Tab.png|old.RData|prsentation.html|prsentation.Rmd|rstudio presentation-figure/unnamed-chunk-2-1.png|rstudio presentation-figure/unnamed-chunk-3-1.png|rstudio presentation-rpubs.html|rstudio presentation.md|www/bootstrap.min (1).css|www/bootstrap.min.css
