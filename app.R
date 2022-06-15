@@ -10,7 +10,6 @@
 #install_tensorflow()
 #intsall_keras()
 
-
 # Import libraries
 library(shiny)
 library(shinythemes)
@@ -20,6 +19,7 @@ library(factoextra)
 library(base64enc)
 library(ggplot2)
 library(tidyr)
+library(httr)
 
 print("Please download mainData.R and load it to your environment before running this Shiny Apps.")
 load(file = "mainData.RData", envir = .GlobalEnv)
@@ -148,7 +148,7 @@ colour <- function(index, cols, x, y){
 # User interface                   #
 ####################################
 
-ui <- fluidPage(theme =  shinytheme("united"),
+ui <- fluidPage(#theme =  shinytheme("united"),
                 navbarPage("MathX Recognizer:",
                            tabPanel("Main",
                                     # Input values
@@ -164,7 +164,8 @@ ui <- fluidPage(theme =  shinytheme("united"),
                                       tags$label(h3('Status/Output')), # Status/Output Text Box
                                       h4("The uploaded image :"),
                                       uiOutput("image"), #Show Uploaded Image
-                                      h4("predicted Expression : ")
+                                      h4("predicted Expression : "),
+                                      textOutput("expression")
                                     )
                                     
                            ),
@@ -351,7 +352,21 @@ server <- function(input, output, session) {
       }
     })
   
-    
+   pressbtn <- observeEvent(input$submitbutton,{
+     print("yuyvhjyfuvhyfvhyivki")
+      url = "https://wie2003handwriting-recognition-o2f2jvjewq-de.a.run.app/api/predict"
+   post_zip = httr::POST(
+       url = url,
+       body = list(
+         file=dataURI(file = input[["upload"]]$datapath, mime = "image/jpeg")
+       ),
+      httr::add_headers("Content-Type"="image/jpeg")
+    )
+    post_zip
+    exp = content(post_zip, "text")
+    output$text <- renderText({input$exp})
+  })
+   
   
   # Second tabPanel - Data Table
   datatableInput <- reactive({
